@@ -93,7 +93,7 @@ describe('Emitter', function () {
         });
 
         it('should return an Array with the ordered options objects when there are listeners for an event', function () {
-            em.options('test').should.containDeepOrdered([op_1, op_2, op_3]);
+            em.options('test').should.eql([op_1, op_2, op_3]);
         });
 
         it('should return the options object for a particular listener when called with two arguments', function () {
@@ -128,7 +128,7 @@ describe('Emitter', function () {
         });
 
         it('should return an Array with the ordered listener functions when there are listeners for an event', function () {
-            em.listeners('test').should.containDeepOrdered([li_1, li_2, li_3]);
+            em.listeners('test').should.eql([li_1, li_2, li_3]);
         });
 
         it('should return the listener function for a particular options object when called with two arguments', function () {
@@ -141,9 +141,7 @@ describe('Emitter', function () {
             var dummy = em.listeners('test', { four: 4 });
 
             dummy.should.be.a.Function();
-            dummy.should.not.equal(li_1);
-            dummy.should.not.equal(li_2);
-            dummy.should.not.equal(li_3);
+            dummy.should.not.equalOneOf(li_1, li_2, li_3);
         });
     });
 
@@ -221,8 +219,7 @@ describe('Emitter', function () {
                 event.should.equal('test');
                 listener.should.equal(li);
                 options.should.equal(op);
-                this.options(event).should.be.empty();
-                this.listeners(event).should.be.empty();
+                this.listenerCount(event).should.equal(0);
             });
 
             em.on('test', li, op);
@@ -332,6 +329,7 @@ describe('Emitter', function () {
                 done = true;
                 this.should.equal(em);
             });
+
             em.emit('test');
             done.should.be['true']();
         });
@@ -345,6 +343,7 @@ describe('Emitter', function () {
                 two.should.equal(2);
                 three.should.equal(3);
             });
+
             em.emit('test', 1, 2, 3);
             done.should.be['true']();
         });
@@ -406,8 +405,7 @@ describe('Emitter', function () {
                 event.should.equal('test');
                 listener.should.equal(li);
                 options.should.equal(op);
-                this.options(event).should.be.empty();
-                this.listeners(event).should.be.empty();
+                this.listenerCount(event).should.equal(0);
             });
 
             em.on('test', li, op);
