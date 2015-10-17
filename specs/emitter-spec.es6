@@ -1,5 +1,5 @@
 //emitter-spec.js
-import Emitter from '../src/emitter'
+import Emitter from '../lib/emitter'
 
 describe('Emitter', function(){
     let originalValue = Emitter.defaultMaxListeners;

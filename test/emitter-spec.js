@@ -3,32 +3,32 @@
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _srcEmitter = require('../src/emitter');
+var _libEmitter = require('../lib/emitter');
 
-var _srcEmitter2 = _interopRequireDefault(_srcEmitter);
+var _libEmitter2 = _interopRequireDefault(_libEmitter);
 
 describe('Emitter', function () {
-    var originalValue = _srcEmitter2['default'].defaultMaxListeners;
+    var originalValue = _libEmitter2['default'].defaultMaxListeners;
 
     afterEach(function () {
-        _srcEmitter2['default'].defaultMaxListeners = originalValue;
+        _libEmitter2['default'].defaultMaxListeners = originalValue;
     });
 
     describe('#defaultMaxListeners', function () {
         it('should be writable', function () {
-            _srcEmitter2['default'].defaultMaxListeners = 25;
-            _srcEmitter2['default'].defaultMaxListeners.should.equal(25);
-            _srcEmitter2['default'].defaultMaxListeners = 42;
-            _srcEmitter2['default'].defaultMaxListeners.should.equal(42);
+            _libEmitter2['default'].defaultMaxListeners = 25;
+            _libEmitter2['default'].defaultMaxListeners.should.equal(25);
+            _libEmitter2['default'].defaultMaxListeners = 42;
+            _libEmitter2['default'].defaultMaxListeners.should.equal(42);
         });
 
         it('should be enumerable', function () {
-            _srcEmitter2['default'].should.have.enumerable('defaultMaxListeners', originalValue);
+            _libEmitter2['default'].should.have.enumerable('defaultMaxListeners', originalValue);
         });
 
         it('should not be configurable', function () {
             (function () {
-                delete _srcEmitter2['default'].defaultMaxListeners;
+                delete _libEmitter2['default'].defaultMaxListeners;
             }).should['throw']();
         });
     });
@@ -37,11 +37,11 @@ describe('Emitter', function () {
         var em = undefined;
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should create a new Emitter instance', function () {
-            em.should.be.an['instanceof'](_srcEmitter2['default']);
+            em.should.be.an['instanceof'](_libEmitter2['default']);
         });
 
         it('should have a maxListeners property', function () {
@@ -49,11 +49,11 @@ describe('Emitter', function () {
         });
 
         it('should use the default value for maxListeners with no arguments', function () {
-            em.maxListeners.should.equal(_srcEmitter2['default'].defaultMaxListeners);
+            em.maxListeners.should.equal(_libEmitter2['default'].defaultMaxListeners);
         });
 
         it('should use the first argument as maxListeners otherwise', function () {
-            em = new _srcEmitter2['default'](5);
+            em = new _libEmitter2['default'](5);
             em.maxListeners.should.equal(5);
         });
 
@@ -82,7 +82,7 @@ describe('Emitter', function () {
         var li_3 = function li_3() {};
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
             em.on('test', li_1, op_1);
             em.on('test', li_2, op_2);
             em.on('test', li_3, op_3);
@@ -117,7 +117,7 @@ describe('Emitter', function () {
         var li_3 = function li_3() {};
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
             em.on('test', li_1, op_1);
             em.on('test', li_2, op_2);
             em.on('test', li_3, op_3);
@@ -149,7 +149,7 @@ describe('Emitter', function () {
         var em = undefined;
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should return zero when there are no listeners for an event', function () {
@@ -183,7 +183,7 @@ describe('Emitter', function () {
         var em = undefined;
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should throw a TypeError if the second argument is not a function', function () {
@@ -238,7 +238,7 @@ describe('Emitter', function () {
         var li_3 = function li_3() {};
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should remove itself from the registered listeners after firing once', function () {
@@ -310,7 +310,7 @@ describe('Emitter', function () {
         var em = undefined;
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should return false when there are no registered listeners', function () {
@@ -378,7 +378,7 @@ describe('Emitter', function () {
         var li = function li() {};
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should return false when trying to remove a listener from an invalid event', function () {
@@ -424,7 +424,7 @@ describe('Emitter', function () {
         var li_3 = function li_3() {};
 
         beforeEach(function () {
-            em = new _srcEmitter2['default']();
+            em = new _libEmitter2['default']();
         });
 
         it('should return false when trying to remove listeners from an invalid event', function () {
@@ -471,4 +471,3 @@ describe('Emitter', function () {
         });
     });
 });
-

@@ -1,0 +1,33 @@
+{
+  "name": "nova",
+  "version": "0.1.0",
+  "description": "An experimental es6 gaming engine",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+      "mocha": "^2.3.3",
+      "babel": "^5.8.23",
+      "should": "^7.1.0"
+  },
+  "scripts": {
+    "test": "mocha -r should",
+    "prepublish": "babel src -d lib && babel specs -d test && babel index.es6 > index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sedabull/nova.git"
+  },
+  "keywords": [
+    "es6",
+    "gaming"
+  ],
+  "author": "Seth David Bullock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sedabull/nova/issues"
+  },
+  "homepage": "https://github.com/sedabull/nova#readme"
+}
