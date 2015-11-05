@@ -89,16 +89,19 @@ export class Point{
                 }//end get
             },//end y
             org_x: {
+                enumerable: true,
                 get: function(){
                     return origin.x;
                 }//end get
             },//end org_x
             org_y: {
+                enumerable: true,
                 get: function(){
                     return origin.y;
                 }//end get
             },//end org_y
             rel_x: {
+                enumerable: true,
                 get: function(){
                     return rel_x;
                 },//end get
@@ -107,6 +110,7 @@ export class Point{
                 }//end set
             },//end rel_x
             rel_y: {
+                enumerable: true,
                 get: function(){
                     return rel_y;
                 },//end get
@@ -115,6 +119,7 @@ export class Point{
                 }//end set
             },//end rel_y
             angle: {
+                enumerable: true,
                 get: function(){
                     return Math.atan2(rel_y, rel_x);
                 },//end get
@@ -127,6 +132,7 @@ export class Point{
                 }//end set
             },//end angle
             dist: {
+                enumerable: true,
                 get: function(){
                     return sqrt(sq(rel_x) + sq(rel_y));
                 },//end get
@@ -183,11 +189,13 @@ export class Circle{
                 }//end set
             },//end r
             center: {
+                enumerable: true,
                 get: function(){
                     return new Point(origin.x, origin.y);
                 }//end get
             },//end centerPoint
             domain: {
+                enumerable: true,
                 get: function(){
                     domain[0] = origin.x - radius;
                     domain[1] = origin.x + radius;
@@ -196,6 +204,7 @@ export class Circle{
                 }//end get
             },//end domain
             range: {
+                enumerable: true,
                 get: function(){
                     range[0] = origin.y - radius;
                     range[1] = origin.y + radius;
@@ -268,6 +277,7 @@ export class Line{
                 }//end get
             },//end length
             center: {
+                enumerable: true,
                 get: function(){
                     let _x = (pt_1.x + pt_2.x) / 2;
                     let _y = (pt_1.y + pt_2.y) / 2;
@@ -276,6 +286,7 @@ export class Line{
                 }//end get
             },//end center
             endPoints: {
+                enumerable: true,
                 get: function(){
                     if(le(pt_1.x, pt_2.x)){
                         return [pt_1, pt_2];
@@ -454,11 +465,13 @@ export class Polygon{
                 }//end get
             },//end r
             pts: {
+                enumerable: true,
                 get: function(){
                     return pts.slice(0);
                 }//end get
             },//end pts
             lns: {
+                enumerable: true,
                 get: function(){
                     return lns.slice(0);
                 }//end get
@@ -478,6 +491,7 @@ export class Polygon{
                 }//end get
             },//end center
             domain: {
+                enumerable: true,
                 get: function(){
                     let low = pts[0];
                     let high = pts[0];
@@ -498,6 +512,7 @@ export class Polygon{
                 }//end get
             },//end domain
             range: {
+                enumerable: true,
                 get: function(){
                     let low = pts[0];
                     let high = pts[0];
