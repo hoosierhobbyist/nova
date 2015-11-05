@@ -519,11 +519,11 @@ export class Polygon{
 
         else{
             let rays = [];
-            for(let vrtx of pts){
+            for(let vrtx of this.pts){
                 rays.push(new Line(pt, vrtx));
             }//end for
 
-            for(let ln of lns){
+            for(let ln of this.lns){
                 if(ln.has(pt)){
                     return true;
                 }//end if
@@ -555,7 +555,7 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of lns){
+            for(let ln of this.lns){
                 if(other.collidesWith(ln)){
                     return true;
                 }//end if
@@ -567,7 +567,7 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of lns){
+            for(let ln of this.lns){
                 if(ln.collidesWith(other)){
                     return true;
                 }//end if
@@ -587,7 +587,7 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of lns){
+            for(let ln of this.lns){
                 if(ln.collidesWith(other)){
                     return true;
                 }//end if
