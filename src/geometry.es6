@@ -447,12 +447,12 @@ export class Polygon{
             },//end r
             pts: {
                 get: function(){
-                    return pts;
+                    return pts.slice(0);
                 }//end get
             },//end pts
             lns: {
                 get: function(){
-                    return lns;
+                    return lns.slice(0);
                 }//end get
             },//end lns
             center: {
@@ -519,11 +519,11 @@ export class Polygon{
 
         else{
             let rays = [];
-            for(let vrtx of this.pts){
+            for(let vrtx of pts){
                 rays.push(new Line(pt, vrtx));
             }//end for
 
-            for(let ln of this.lns){
+            for(let ln of lns){
                 for(let ray of rays){
                     if(!(ln.has(ray.endPoints[0]) || ln.has(ray.endPoints[1]))){
                         if(ln.collidesWith(ray)){
@@ -551,8 +551,8 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of other.lns){
-                if(this.collidesWith(ln)){
+            for(let ln of lns){
+                if(other.collidesWith(ln)){
                     return true;
                 }//end if
             }//end for ln
@@ -563,7 +563,7 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of this.lns){
+            for(let ln of lns){
                 if(ln.collidesWith(other)){
                     return true;
                 }//end if
@@ -583,7 +583,7 @@ export class Polygon{
                 return true;
             }//end if
 
-            for(let ln of this.lns){
+            for(let ln of lns){
                 if(ln.collidesWith(other)){
                     return true;
                 }//end if
