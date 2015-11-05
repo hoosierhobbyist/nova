@@ -517,28 +517,41 @@ export class Polygon{
             return false;
         }//end if
 
-        else{
-            let rays = [];
-            for(let vrtx of this.pts){
-                rays.push(new Line(pt, vrtx));
-            }//end for
+        if(lt(pt.x, this.domain[0])){
+            return false;
+        }//end if
 
-            for(let ln of this.lns){
-                if(ln.has(pt)){
-                    return true;
-                }//end if
+        if(gt(pt.x, this.domain[1])){
+            return false;
+        }//end if
 
-                for(let ray of rays){
-                    if(!(ln.has(ray.endPoints[0]) || ln.has(ray.endPoints[1]))){
-                        if(ln.collidesWith(ray)){
-                            return false;
-                        }//end if
+        if(lt(pt.y, this.range[0])){
+            return false;
+        }//end if
+
+        if(gt(pt.y, this.range[1])){
+            return false;
+        }//end if
+
+        let rays = this.pts.map(function(point){
+            return new Line(pt, point);
+        });
+
+        for(let ln of this.lns){
+            if(ln.has(pt)){
+                return true;
+            }//end if
+
+            for(let ray of rays){
+                if(!(ln.has(ray.endPoints[0]) || ln.has(ray.endPoints[1]))){
+                    if(ln.collidesWith(ray)){
+                        return false;
                     }//end if
-                }//end for ray
-            }//end for line
+                }//end if
+            }//end for ray
+        }//end for line
 
-            return true;
-        }//end else
+        return true;
     }//end has
 
     collidesWith(other){
