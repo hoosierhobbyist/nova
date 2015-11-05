@@ -25,7 +25,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('constructor', function(){
+    describe('constructor([maxListeners])', function(){
         let em;
 
         beforeEach(function(){
@@ -60,7 +60,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::options', function(){
+    describe('::options(event[, listener])', function(){
         let em;
         let op_1 = {one: 1};
         let op_2 = {two: 2};
@@ -95,7 +95,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::listeners', function(){
+    describe('::listeners(event[, options])', function(){
         let em;
         let op_1 = {one: 1};
         let op_2 = {two: 2};
@@ -133,7 +133,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::listenerCount', function(){
+    describe('::listenerCount(event)', function(){
         let em;
 
         beforeEach(function(){
@@ -167,7 +167,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::on', function(){
+    describe('::on(event, listener[, options])', function(){
         let em;
 
         beforeEach(function(){
@@ -209,7 +209,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::once', function(){
+    describe('::once(event, listener[, options])', function(){
         let em;
         let li_1 = function(){};
         let li_2 = function(){};
@@ -284,7 +284,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::emit', function(){
+    describe('::emit(event[, ...args])', function(){
         let em;
 
         beforeEach(function(){
@@ -350,7 +350,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::remove', function(){
+    describe('::remove(event, listener)', function(){
         let em;
         let op = {test: 'test'};
         let li = function(){};
@@ -392,7 +392,7 @@ describe('Emitter', function(){
         });
     });
 
-    describe('::removeAll', function(){
+    describe('::removeAll([event])', function(){
         let em;
         let op_1 = {one: 1};
         let op_2 = {two: 2};
