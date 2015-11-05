@@ -524,6 +524,10 @@ export class Polygon{
             }//end for
 
             for(let ln of lns){
+                if(ln.has(pt)){
+                    return true;
+                }//end if
+
                 for(let ray of rays){
                     if(!(ln.has(ray.endPoints[0]) || ln.has(ray.endPoints[1]))){
                         if(ln.collidesWith(ray)){
