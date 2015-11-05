@@ -560,6 +560,22 @@ export class Polygon{
                 return false;
             }//end if
 
+            if(lt(other.domain[1], this.domain[0])){
+                return false;
+            }//end if
+
+            if(gt(other.domain[0], this.domain[1])){
+                return false;
+            }//end if
+
+            if(lt(other.range[1], this.range[0])){
+                return false;
+            }//end if
+
+            if(gt(other.range[0], this.range[1])){
+                return false;
+            }//end if
+
             if(this.has(other.center)){
                 return true;
             }//end if
@@ -576,6 +592,22 @@ export class Polygon{
         }//end if
 
         else if(other instanceof Line){
+            if(lt(other.domain[1], this.domain[0])){
+                return false;
+            }//end if
+
+            if(gt(other.domain[0], this.domain[1])){
+                return false;
+            }//end if
+
+            if(lt(other.range[1], this.range[0])){
+                return false;
+            }//end if
+
+            if(gt(other.range[0], this.range[1])){
+                return false;
+            }//end if
+
             if(this.has(other.center)){
                 return true;
             }//end if
@@ -589,6 +621,22 @@ export class Polygon{
 
         else if(other instanceof Circle){
             if(gt(dist(this.center, other.center), this.r + other.r)){
+                return false;
+            }//end if
+
+            if(lt(other.domain[1], this.domain[0])){
+                return false;
+            }//end if
+
+            if(gt(other.domain[0], this.domain[1])){
+                return false;
+            }//end if
+
+            if(lt(other.range[1], this.range[0])){
+                return false;
+            }//end if
+
+            if(gt(other.range[0], this.range[1])){
                 return false;
             }//end if
 
