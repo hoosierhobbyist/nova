@@ -1,7 +1,7 @@
 //geometry-spec.js
 import {Point, Line, Circle, Polygon} from '../lib/geometry';
 
-describe('Point', function(){
+describe('Point(rel_x, rel_y[, origin])', function(){
     it('should create its own origin point at (0, 0) if none is provided', function(){
         let pt = new Point(4, 2);
         pt.org_x.should.equal(0);
@@ -49,7 +49,7 @@ describe('Point', function(){
     });
 });
 
-describe('Circle', function(){
+describe('Circle([radius][, origin])', function(){
     it('should create its own origin point at (0, 0) if none is provided', function(){
         let cir = new Circle(3);
         cir.a.should.equal(0);
@@ -95,7 +95,17 @@ describe('Circle', function(){
         cir.b.should.equal(-1);
     });
 
-    describe('::has', function(){
+    it('should have an ordered domain', function(){
+        let cir = new Circle();
+        cir.domain[0].should.be.lessThan(cir.domain[1]);
+    });
+
+    it('should have an ordered range', function(){
+        let cir = new Circle();
+        cir.range[0].should.be.lessThan(cir.range[1]);
+    });
+
+    describe('::has(pt)', function(){
         let cir = new Circle();
 
         it('should return false if a Point is outside of the circle', function(){
@@ -120,7 +130,7 @@ describe('Circle', function(){
         });
     });
 
-    describe('::collidesWith', function(){
+    describe('::collidesWith(other)', function(){
         it('should return false if two Circles aren\'t touching', function(){
             let cir1 = new Circle(1, {x: -1, y: 0});
             let cir2 = new Circle(2, {x: 4, y: 2});
@@ -155,7 +165,7 @@ describe('Circle', function(){
     });
 });
 
-describe('Line', function(){
+describe('Line(pt_1, pt_2)', function(){
     it('should keep references to its end points', function(){
         let pt_1 = new Point(-1, -1);
         let pt_2 = new Point(1, 1);
@@ -187,7 +197,17 @@ describe('Line', function(){
         ln.b.should.not.equal(control.b);
     });
 
-    describe('::has', function(){
+    it('should have an ordered domain', function(){
+        let ln = new Line({x: 1, y: 1}, {x: 0, y: 0});
+        ln.domain[0].should.be.lessThan(ln.domain[1]);
+    });
+
+    it('should have an ordered range', function(){
+        let ln = new Line({x: 1, y: 2}, {x: 4, y: 0});
+        ln.range[0].should.be.lessThan(ln.range[1]);
+    });
+
+    describe('::has(pt)', function(){
         it('should return false if a point is off the line', function(){
             let ln_1 = new Line({x: -1, y: -1}, {x: 1, y: 1});
             let ln_2 = new Line({x: 0, y: -1}, {x: 0, y: 1});
@@ -217,7 +237,7 @@ describe('Line', function(){
         });
     });
 
-    describe('::collidesWith', function(){
+    describe('::collidesWith(other)', function(){
         it('should return false if two Lines aren\'t touching', function(){
             let ln_1 = new Line({x: -2, y: -2}, {x: -1, y: -1});
             let ln_2 = new Line({x: 1, y: 1}, {x: 2, y: 2});
@@ -311,4 +331,133 @@ describe('Line', function(){
     });
 });
 
-describe('Polygon', function(){});
+describe('Polygon(...pts)', function(){
+    it('should throw an Error when less than three Points are provided', function(){
+        (function(){let ply = new Polygon();}).should.throw();
+        (function(){let ply = new Polygon({x: 0, y: 0});}).should.throw();
+        (function(){let ply = new Polygon({x: 1, y: 1}, {x: 2, y: 2});}).should.throw();
+    });
+
+    it('should create an array of Lines as long as the its Points array', function(){
+        let ply = new Polygon({x: -1, y: 0}, {x: 0, y: 1}, {x: 1, y: 0});
+        ply.pts.length.should.equal(ply.lns.length).and.equal(ply.n);
+    });
+
+    it('should have an ordered domain', function(){
+        let ply = new Polygon({x: 1, y: 0}, {x: 0, y: 1}, {x: -1, y: 0});
+        ply.domain[0].should.be.lessThan(ply.domain[1]);
+    });
+
+    it('should have an ordered range', function(){
+        let ply = new Polygon({x: 1, y: 0}, {x: 0, y: 1}, {x: -1, y: 0});
+        ply.range[0].should.be.lessThan(ply.range[1]);
+    });
+
+    describe('::has(pt)', function(){
+        let ply = new Polygon({x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 0});
+
+        it('should return false if a Point is outside of the Polygon', function(){
+            ply.has({x: .5, y: .7}).should.be.false();
+            ply.has({x: -3, y: 7}).should.be.false();
+            ply.has({x: 1, y: 1.1}).should.be.false();
+        });
+
+        it('should return true if a Point is on the Polygon', function(){
+            ply.has({x: .5, y: .5}).should.be.true();
+            ply.has({x: 1, y: 1}).should.be.true();
+            ply.has({x: 1.5, y: 0}).should.be.true();
+        });
+
+        it('should return true if a Point is inside of the Polygon', function(){
+            ply.has({x: 1, y: .5}).should.be.true();
+            ply.has({x: .5, y: .3}).should.be.true();
+            ply.has({x: 1.5, y: .1}).should.be.true();
+        });
+    });
+
+    describe('::collidesWith(other)', function(){
+        it('should return false when two Polygons aren\'t touching', function(){
+            let ply_1 = new Polygon({x: -1, y: 0}, {x: 0, y: 1}, {x: 1, y: 0});
+            let ply_2 = new Polygon({x: 5, y: 3}, {x: 6, y: 8}, {x: 7, y: 2});
+
+            ply_1.collidesWith(ply_2).should.be.false();
+            ply_2.collidesWith(ply_1).should.be.false();
+
+            ply_2 = new Polygon({x: .5, y: .7}, {x: 2, y: 4}, {x: 3, y: 1});
+            ply_1.collidesWith(ply_2).should.be.false();
+            ply_2.collidesWith(ply_1).should.be.false();
+
+            ply_2 = new Polygon({x: -1, y: -1}, {x: 0, y: -.25}, {x: 1, y: -1});
+            ply_1.collidesWith(ply_2).should.be.false();
+            ply_2.collidesWith(ply_1).should.be.false();
+        });
+
+        it('should return true when two Polygons are touching', function(){
+            let ply_1 = new Polygon({x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 0});
+            let ply_2 = new Polygon({x: -4, y: -4}, {x: -4, y: 4}, {x: 3, y: 4}, {x: 3, y: -4});
+
+            ply_1.collidesWith(ply_2).should.be.true();
+            ply_2.collidesWith(ply_1).should.be.true();
+
+            ply_1 = new Polygon({x: -1, y: 4}, {x: 0, y: 5}, {x: 1, y: 4});
+            ply_1.collidesWith(ply_2).should.be.true();
+            ply_2.collidesWith(ply_1).should.be.true();
+
+            ply_1 = new Polygon({x: -1, y: -5}, {x: 0, y: -2}, {x: 1, y: -5});
+            ply_1.collidesWith(ply_2).should.be.true();
+            ply_2.collidesWith(ply_1).should.be.true();
+        });
+
+        it('should return false when a Line and a Polygon aren\'t touching', function(){
+            let ln = new Line({x: -2, y: 2}, {x: 2, y: 2});
+            let ply = new Polygon({x: -8, y: 0}, {x: 0, y: 1}, {x: 8, y: 0});
+
+            ply.collidesWith(ln).should.be.false();
+
+            ln = new Line({x: 0, y: 2}, {x: 0, y: 5});
+            ply.collidesWith(ln).should.be.false();
+
+            ln = new Line({x: 10, y: -4}, {x: 12, y: 5});
+            ply.collidesWith(ln).should.be.false();
+        });
+
+        it('should return true when a Line and a Polygon are touching', function(){
+            let ln = new Line({x: -2, y: .5}, {x: 2, y: .5});
+            let ply = new Polygon({x: -8, y: 0}, {x: 0, y: 1}, {x: 8, y: 0});
+
+            ply.collidesWith(ln).should.be.true();
+
+            ln = new Line({x: -1, y: -1}, {x: 1, y: 1});
+            ply.collidesWith(ln).should.be.true();
+
+            ln = new Line({x: 3, y: -1}, {x: 3, y: 1});
+            ply.collidesWith(ln).should.be.true();
+        });
+
+        it('should return false when a Circle and a Polygon aren\'t touching', function(){
+            let cir = new Circle(1, {x: 0, y: 3});
+            let ply = new Polygon({x: -8, y: 0}, {x: 0, y: 1}, {x: 8, y: 0});
+
+            ply.collidesWith(cir).should.be.false();
+
+            cir = new Circle(1, {x: 15, y: 15});
+            ply.collidesWith(cir).should.be.false();
+
+            cir = new Circle(1, {x: -2, y: -3});
+            ply.collidesWith(cir).should.be.false();
+        });
+
+        it('should return true when a Circle and a Polygon are touching', function(){
+            let cir = new Circle();
+            let ply = new Polygon({x: -3, y: -3}, {x: -3, y: 3}, {x: 3, y: 3}, {x: 3, y: -3});
+
+            ply.collidesWith(cir).should.be.true();
+
+            cir = new Circle(10);
+            ply.collidesWith(cir).should.be.true();
+
+            cir = new Circle(2, {x: 2, y: 2});
+            ply.collidesWith(cir).should.be.true();
+        });
+    });
+});
