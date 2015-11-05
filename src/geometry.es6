@@ -211,6 +211,10 @@ export class Circle{
     }//end has
 
     collidesWith(other){
+        if(other instanceof Point){
+            return this.has(other);
+        }//end if
+
         if(other instanceof Circle){
             return le(dist(this.center, other.center), this.r + other.r);
         }//end if
@@ -332,6 +336,10 @@ export class Line{
     }//end contains
 
     collidesWith(other){
+        if(other instanceof Point){
+            return this.has(other);
+        }//end if
+
         if(other instanceof Line){
             if(Number.isNaN(this.m) && Number.isNaN(other.m)){
                 if(eq(this.center.x, other.center.x)){
@@ -555,6 +563,10 @@ export class Polygon{
     }//end has
 
     collidesWith(other){
+        if(other instanceof Point){
+            return this.has(other);
+        }//end if
+
         if(other instanceof Polygon){
             if(gt(dist(this.center, other.center), this.r + other.r)){
                 return false;
