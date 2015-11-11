@@ -1,20 +1,22 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-    value: true
+  value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+function _interopExportWildcard(obj, defaults) { var newObj = defaults({}, obj); delete newObj['default']; return newObj; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+var _libSprite = require('./lib/sprite');
+
+_defaults(exports, _interopExportWildcard(_libSprite, _defaults));
 
 var _libEmitter = require('./lib/emitter');
 
-var _libEmitter2 = _interopRequireDefault(_libEmitter);
+_defaults(exports, _interopExportWildcard(_libEmitter, _defaults));
 
 var _libGeometry = require('./lib/geometry');
 
-exports.Emitter = _libEmitter2['default'];
-exports.Point = _libGeometry.Point;
-exports.Circle = _libGeometry.Circle;
-exports.Line = _libGeometry.Line;
-exports.Polygon = _libGeometry.Polygon;
+_defaults(exports, _interopExportWildcard(_libGeometry, _defaults));
 

@@ -1,10 +1,3 @@
-import Emitter from './lib/emitter';
-import {Point, Circle, Line, Polygon} from './lib/geometry';
-
-export {
-    Emitter,
-    Point,
-    Circle,
-    Line,
-    Polygon
-};
+export * from './lib/sprite';
+export * from './lib/emitter';
+export * from './lib/geometry';
