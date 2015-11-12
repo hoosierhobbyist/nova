@@ -11,6 +11,11 @@ let __groups = new Map();
 let __zLevels = new Map();
 let __origin = new Point(0, 0);
 let __context = Engine.canvas.getContext('2d');
+let __polar = [
+    'dispMag', 'dispAngle',
+    'velMag', 'velAngle',
+    'accMag', 'accAngle'
+];//end __polar
 let __defaults = {
     k: 25,
     x: 0,
@@ -66,11 +71,6 @@ export default class Sprite extends Emitter{
     constructor(config = {}){
         super();
         let __edge;
-        let __polar = [
-            'dispMag', 'dispAngle',
-            'velMag', 'velAngle',
-            'accMag', 'accAngle'
-        ];//end __polar
 
         for(let key of Object.keys(__defaults)){
             if(config[key] == null){
@@ -485,7 +485,11 @@ export default class Sprite extends Emitter{
 
     collidesWith(other){
         if(other instanceof Sprite){
-            return this.edge.collidesWith(other.edge);
+            if(this.visible){
+                if(other.visible){
+                    return this.edge.collidesWith(other.edge);
+                }//end if
+            }//end if
         }//end if
         return false;
     }//end ::collidesWith
@@ -665,8 +669,8 @@ Object.defineProperties(Sprite, {
     },//end deleteAll
     draw: {
         value: function(){
-            for(let set of Array.from(__zLevels.keys()).sort()){
-                set.forEach(function(sprite){sprite.draw();});
+            for(let key of Array.from(__zLevels.keys()).sort()){
+                __zLevels.get(key).forEach(function(sprite){sprite.draw();});
             }//end for
         }//end value
     }//end draw
