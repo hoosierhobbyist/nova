@@ -8,16 +8,16 @@ let bndActions = {
             this.visible = false;
         },//end DIE
         WRAP: function(){
-            this.left = Engine.bounds.right;
+            this.left = Engine.right;
         },//end WRAP
         STOP: function(){
-            this.left = Engine.bounds.left + 1;
+            this.left = Engine.left + 1;
         },//end STOP
         SPRING: function(){
-            this.dx += this.k * (Engine.bounds.left - this.left);
+            this.dx += this.k * (Engine.left - this.left);
         },//end SPRING
         BOUNCE: function(){
-            this.left = Engine.bounds.left + 1;
+            this.left = Engine.left + 1;
             this.dx *= -1;
         }//end BOUNCE
     },//end left
@@ -26,16 +26,16 @@ let bndActions = {
             this.visible = false;
         },//end DIE
         WRAP: function(){
-            this.right = Engine.bounds.left;
+            this.right = Engine.left;
         },//end WRAP
         STOP: function(){
-            this.right = Engine.bounds.right - 1;
+            this.right = Engine.right - 1;
         },//end STOP
         SPRING: function(){
-            this.dx += this.k * (Engine.bounds.right - this.right);
+            this.dx += this.k * (Engine.right - this.right);
         },//end SPRING
         BOUNCE: function(){
-            this.right = Engine.bounds.right - 1;
+            this.right = Engine.right - 1;
             this.dx *= -1;
         }//end BOUNCE
     },//end right
@@ -44,16 +44,16 @@ let bndActions = {
             this.visible = false;
         },//end DIE
         WRAP: function(){
-            this.top = Engine.bounds.bottom;
+            this.top = Engine.bottom;
         },//end WRAP
         STOP: function(){
-            this.top = Engine.bounds.top - 1;
+            this.top = Engine.top - 1;
         },//end STOP
         SPRING: function(){
-            this.dy += this.k * (Engine.bounds.top - this.top);
+            this.dy += this.k * (Engine.top - this.top);
         },//end SPRING
         BOUNCE: function(){
-            this.top = Engine.bounds.top - 1;
+            this.top = Engine.top - 1;
             this.dy *= -1;
         }//end BOUNCE
     },//end top
@@ -62,16 +62,16 @@ let bndActions = {
             this.visible = false;
         },//end DIE
         WRAP: function(){
-            this.bottom = Engine.bounds.top;
+            this.bottom = Engine.top;
         },//end WRAP
         STOP: function(){
-            this.bottom = Engine.bounds.bottom + 1;
+            this.bottom = Engine.bottom + 1;
         },//end STOP
         SPRING: function(){
-            this.dy += this.k * (Engine.bounds.bottom - this.bottom);
+            this.dy += this.k * (Engine.bottom - this.bottom);
         },//end SPRING
         BOUNCE: function(){
-            this.bottom = Engine.bounds.bottom + 1;
+            this.bottom = Engine.bottom + 1;
             this.dy *= -1;
         }//end BOUNCE
     }//end bottom

@@ -1,5 +1,6 @@
 //sprite.js
 
+import dummy from './dummy';
 import Engine from './engine';
 import Emitter from './emitter';
 import bndActions from './boundaryActions';
@@ -10,6 +11,7 @@ let __all = new Set();
 let __groups = new Map();
 let __zLevels = new Map();
 let __origin = new Point(0, 0);
+let Image = Image || dummy.Image;
 let __context = Engine.canvas.getContext('2d');
 let __polar = [
     'dispMag', 'dispAngle',
@@ -557,7 +559,7 @@ export default class Sprite extends Emitter{
         this.dtilt += this.ddtilt / Engine.frameRate;
         this.tilt += this.dtilt / Engine.frameRate;
 
-        if(this.right < Engine.bounds.left){
+        if(this.right < Engine.left){
             this.emit('off-left');
             if(this.bndActions['left'] === 'DIE'){
                 bndActions.left.DIE.call(this);
@@ -566,7 +568,7 @@ export default class Sprite extends Emitter{
                 bndActions.left.WRAP.call(this);
             }//end else if
         }//end if
-        if(this.left > Engine.bounds.right){
+        if(this.left > Engine.right){
             this.emit('off-right');
             if(this.bndActions['right'] === 'DIE'){
                 bndActions.right.DIE.call(this);
@@ -575,7 +577,7 @@ export default class Sprite extends Emitter{
                 bndActions.right.WRAP.call(this);
             }//end else if
         }//end if
-        if(this.bottom > Engine.bounds.top){
+        if(this.bottom > Engine.top){
             this.emit('off-top');
             if(this.bndActions['top'] === 'DIE'){
                 bndActions.top.DIE.call(this);
@@ -584,7 +586,7 @@ export default class Sprite extends Emitter{
                 bndActions.top.WRAP.call(this);
             }//end else if
         }//end if
-        if(this.top < Engine.bounds.bottom){
+        if(this.top < Engine.bottom){
             this.emit('off-bottom');
             if(this.bndActions['bottom'] === 'DIE'){
                 bndActions.bottom.DIE.call(this);
@@ -594,7 +596,7 @@ export default class Sprite extends Emitter{
             }//end else if
         }//end if
 
-        if(this.left <= Engine.bounds.left){
+        if(this.left <= Engine.left){
             this.emit('hit-left');
             if(this.bndActions['left'] === 'STOP'){
                 bndActions.left.STOP.call(this);
@@ -606,7 +608,7 @@ export default class Sprite extends Emitter{
                 bndActions.left.BOUNCE.call(this);
             }//end else if
         }//end if
-        if(this.right >= Engine.bounds.right){
+        if(this.right >= Engine.right){
             this.emit('hit-right');
             if(this.bndActions['right'] === 'STOP'){
                 bndActions.right.STOP.call(this);
@@ -618,7 +620,7 @@ export default class Sprite extends Emitter{
                 bndActions.right.BOUNCE.call(this);
             }//end else if
         }//end if
-        if(this.top >= Engine.bounds.top){
+        if(this.top >= Engine.top){
             this.emit('hit-top');
             if(this.bndActions['top'] === 'STOP'){
                 bndActions.top.STOP.call(this);
@@ -630,7 +632,7 @@ export default class Sprite extends Emitter{
                 bndActions.top.BOUNCE.call(this);
             }//end else if
         }//end if
-        if(this.bottom <= Engine.bounds.bottom){
+        if(this.bottom <= Engine.bottom){
             this.emit('hit-bottom');
             if(this.bndActions['bottom'] === 'STOP'){
                 bndActions.bottom.STOP.call(this);
