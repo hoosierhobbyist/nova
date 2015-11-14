@@ -60,6 +60,20 @@ describe('Emitter', function(){
         });
     });
 
+    describe('::events()', function(){
+        it('should return an Array of all registered events', function(){
+            let em = new Emitter();
+
+            em.on('test', function(){});
+            em.once('Test', function(){});
+            em.on('TEST', function(){});
+
+            em.events().should.eql(['test', 'Test', 'TEST']);
+            em.emit('Test');
+            em.events().should.eql(['test', 'TEST']);
+        });
+    });
+
     describe('::options(event[, listener])', function(){
         let em;
         let op_1 = {one: 1};
