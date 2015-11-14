@@ -67,6 +67,7 @@ TODO:
     - Emitter should have an events() method that returns an Array or @@iterator
     x should Sprite#ctx be visible? (no)
     - drawing a non-image Sprite should have more options
+    - should sprites update independantly?
 */
 export default class Sprite extends Emitter{
 
@@ -677,3 +678,5 @@ Object.defineProperties(Sprite, {
         }//end value
     }//end draw
 });//end defineProperties
+
+Engine.on('update', Sprite.draw);
