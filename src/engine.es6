@@ -2,6 +2,7 @@
 
 import dummy from './dummy';
 import Emitter from './emitter';
+import {Point} from './geometry';
 
 let __canvas;
 let __frameRate = 25;
@@ -11,7 +12,7 @@ let __masterUpdate = function(){
     Engine.clear();
     Engine.emit('update');
 }//end __masterUpdate
-let __isDown = new Int8Array(new ArrayBuffer(90));
+let __isDown = new Int8Array(new ArrayBuffer(128));
 let KEYS = {
     SHIFT: 16, CTRL: 17, ALT: 18,
     ESC: 27, SPACE: 32, PGUP: 33,
@@ -60,6 +61,8 @@ if(document != null){
             Engine.start();
             __canvas.onclick = void 0;
         };//end onclick
+
+        this.emit('draw-title-screen', context);
     });//end once('init')
 }//end if
 
@@ -109,7 +112,7 @@ Object.defineProperties(Engine, {
     mouse: {
         enumerable: true,
         get: function(){
-            return {x: this.mouseX, y: this.mouseY};
+            return new Point(this.mouseX, this.mouseY);
         }//end get
     },//end mouse
     isDown: {
@@ -147,6 +150,7 @@ Object.defineProperties(Engine, {
         enumerable: true,
         value: function(){
             if(!this.isRunning){
+                this.emit('start');
                 __masterID = setInterval(__masterUpdate, 1000 / __frameRate);
             }//end if
         }//end value
@@ -155,6 +159,7 @@ Object.defineProperties(Engine, {
         enumerable: true,
         value: function(){
             if(this.isRunning){
+                this.emit('stop');
                 clearInterval(__masterID);
                 __masterID = null;
             }//end if

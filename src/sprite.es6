@@ -44,7 +44,7 @@ TODO:
     x add `k` property to Sprite instances (spring constant)
     x deal with magnitudes and angles in config
     x figure out boundary actions (deep copy? look up /\)
-    - need a context from a <canvas> tag
+    x need a context from a <canvas> tag
     x need to deal with `on-*` and `once-*` keys in config object (is this too complicated? yes)
     x when do I seal the config object? (at the very end of constructor)
     - Sprite class level methods (should i copy all from Greenhorn?)
@@ -61,13 +61,17 @@ TODO:
     x should __zLevels and __groups be a Map of WeakSets? (yes)
     - should the boundary action keys be Symbols?
     - should setting numeric values fail silently if parseFloat() fails?
+        - this would mean the config object needs to be vetted before use
     - Sprite prototype methods need to be aware of Mouse object
     - should there be draw events?
     x bndActions should be organized by side then action
-    - Emitter should have an events() method that returns an Array or @@iterator
+    x Emitter should have an events() method that returns an Array
     x should Sprite#ctx be visible? (no)
     - drawing a non-image Sprite should have more options
-    - should sprites update independantly?
+    x should sprites update independantly? (yes, for now)
+    - should scale be split between x and y?
+    - collision routines should support bare Points and Shapes
+        - how should this work for distanceTo and angleTo? (maybe use center point?)
 */
 export default class Sprite extends Emitter{
 
@@ -313,9 +317,11 @@ export default class Sprite extends Emitter{
                 set: function(value){
                     if(config['zLevel'] !== value){
                         __zLevels.get(config['zLevel']).delete(this);
+
                         if(!__zLevels.has(value)){
                             __zLevels.set(value, new WeakSet());
                         }//end if
+
                         __zLevels.get(value).add(this);
                         config['zLevel'] = value;
                     }//end if
@@ -370,7 +376,7 @@ export default class Sprite extends Emitter{
                     return this.image.src;
                 },//end get
                 set: function(value){
-                    this.image.src = value.toString();
+                    this.img.src = value.toString();
                 }//end set
             },//end imgFile
             imgWidth: {
@@ -460,22 +466,54 @@ export default class Sprite extends Emitter{
                 get: function(){
                     return config['bndActions'];
                 }//end get
-            }//end bndActions
+            },//end bndActions
+            updateID: {
+                value: null
+            },//end updateID
+            isRunning: {
+                enumerable: true,
+                get: function(){
+                    return this.updateID != null;
+                }//end get
+            }//end isRunning
         });//end defineProperties
 
-        this.imgSrc = config['imgSrc'];
         __all.add(this);
+        this.imgSrc = config['imgSrc'];
+
         if(!__zLevels.has(config['zLevel'])){
             __zLevels.set(config['zLevel'], new WeakSet());
         }//end if
         __zLevels.get(config['zLevel']).add(this);
+
         Object.seal(config);
+        if(Engine.isRunning){
+            this.start();
+        }//end if
     }//end constructor
+
+    start(){
+        if(!this.isRunning){
+            this.updateID = setInterval(()=>{this.update();}, 1000 / Engine.frameRate);
+        }//end if
+    }//end ::start
+
+    stop(){
+        if(this.isRunning){
+            clearInterval(this.updateID);
+            this.updateID = null;
+        }//end if
+    }//end ::stop
 
     distanceTo(other){
         if(other instanceof Sprite){
             return dist(this.edge.center, other.edge.center);
         }//end if
+
+        else if(other === 'mouse'){
+            return dist(this.edge.center, Engine.mouse);
+        }//end else if
+
         return NaN;
     }//end ::distanceTo
 
@@ -483,18 +521,28 @@ export default class Sprite extends Emitter{
         if(other instanceof Sprite){
             return atan2(other.y - this.y, other.x - this.x);
         }//end if
+
+        else if(other === 'mouse'){
+            return atan2(Engine.mouseY - this.y, Engine.mouseX - this.x);
+        }//end else if
+
         return NaN;
     }//end ::angleTo
 
     collidesWith(other){
-        if(other instanceof Sprite){
-            if(this.visible){
+        if(this.visible){
+            if(other instanceof Sprite){
                 if(other.visible){
                     return this.edge.collidesWith(other.edge);
                 }//end if
             }//end if
+
+            else if(other === 'mouse'){
+                return this.edge.collidesWith(Engine.mouse);
+            }//end else if
         }//end if
-        return false;
+
+        return this.edge.collidesWith(other);
     }//end ::collidesWith
 
     draw(){
@@ -658,6 +706,10 @@ Object.defineProperties(Sprite, {
             return __all.size;
         }//end get
     },//end number
+    defaults: {
+        enumerable: true,
+        value: __defaults
+    },//end defaults
     delete: {
         enumerable: true,
         value: function(sprite){
@@ -670,6 +722,16 @@ Object.defineProperties(Sprite, {
             __all.clear();
         }//end value
     },//end deleteAll
+    start: {
+        value: function(){
+            __all.forEach(function(sprite){sprite.start();});
+        }//end value
+    },//end start
+    stop: {
+        value: function(){
+            __all.forEach(function(sprite){sprite.stop();});
+        }//end value
+    },//end stop
     draw: {
         value: function(){
             for(let key of Array.from(__zLevels.keys()).sort()){
@@ -679,4 +741,6 @@ Object.defineProperties(Sprite, {
     }//end draw
 });//end defineProperties
 
+Engine.on('start', Sprite.start);
+Engine.on('stop', Sprite.stop);
 Engine.on('update', Sprite.draw);
