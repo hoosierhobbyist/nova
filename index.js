@@ -1,22 +1,36 @@
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-  value: true
+    value: true
 });
 
-function _interopExportWildcard(obj, defaults) { var newObj = defaults({}, obj); delete newObj['default']; return newObj; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+var _libTimer = require('./lib/timer');
+
+var _libTimer2 = _interopRequireDefault(_libTimer);
+
+var _libEngine = require('./lib/engine');
+
+var _libEngine2 = _interopRequireDefault(_libEngine);
 
 var _libSprite = require('./lib/sprite');
 
-_defaults(exports, _interopExportWildcard(_libSprite, _defaults));
+var _libSprite2 = _interopRequireDefault(_libSprite);
 
 var _libEmitter = require('./lib/emitter');
 
-_defaults(exports, _interopExportWildcard(_libEmitter, _defaults));
+var _libEmitter2 = _interopRequireDefault(_libEmitter);
 
 var _libGeometry = require('./lib/geometry');
 
-_defaults(exports, _interopExportWildcard(_libGeometry, _defaults));
+exports.Timer = _libTimer2['default'];
+exports.Sprite = _libSprite2['default'];
+exports.Emitter = _libEmitter2['default'];
+exports.Point = _libGeometry.Point;
+exports.Circle = _libGeometry.Circle;
+exports.Line = _libGeometry.Line;
+exports.Polygon = _libGeometry.Polygon;
+exports.nova = _libEngine2['default'];
+//end exports
 

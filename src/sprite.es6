@@ -41,6 +41,7 @@ Object.seal(__defaults);
 
 /*
 TODO:
+    ! CRITICAL: a whole lot of NaNs showing up in repl session
     x add `k` property to Sprite instances (spring constant)
     x deal with magnitudes and angles in config
     x figure out boundary actions (deep copy? look up /\)
@@ -131,8 +132,8 @@ export default class Sprite extends Emitter{
             __edge = new Polygon(...pts);
         }//end else if
         else{
-            let a = atan2(config['height'] / 2, config['width'] / 2);
-            let m = sqrt(sq(config['height'] / 2) + sq(config['width'] / 2));
+            let a = atan2(config['imgHeight'] / 2, config['imgWidth'] / 2);
+            let m = sqrt(sq(config['imgHeight'] / 2) + sq(config['imgWidth'] / 2));
             let pts = [
                 new Point(m * cos(config.tilt + a), m * sin(config.tilt + a), this),
                 new Point(m * cos(config.tilt - a), m * sin(config.tilt - a), this),

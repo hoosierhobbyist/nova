@@ -26,51 +26,48 @@ let KEYS = {
     T: 84, U: 85, V: 86, W: 87, X: 88, Y: 89, Z: 90
 };//end KEYS
 
-if(document != null){
-    document.onkeyup = function(e){
-        e.preventDefault();
-        __isDown[e.keyCode] = 0;
-    }//end onkeyup
-    document.onkeydown = function(e){
-        e.preventDefault();
-        __isDown[e.keyCode] = 1;
-    }//end onkeydown
-    document.onreadystatechange = function(){
-        if(this.readyState === 'interactive'){
-            Engine.emit('init');
-        }//end if
-    }//end onreadystatechange
+let document = document ? document : dummy;
+document.onkeyup = function(e){
+    e.preventDefault();
+    __isDown[e.keyCode] = 0;
+}//end onkeyup
+document.onkeydown = function(e){
+    e.preventDefault();
+    __isDown[e.keyCode] = 1;
+}//end onkeydown
+document.onreadystatechange = function(){
+    if(this.readyState === 'interactive'){
+        Engine.emit('init');
+    }//end if
+}//end onreadystatechange
 
-    Engine.once('init', function(){
-        __canvas = document.querySelector('#nova canvas');
-        if(__canvas == null){
-            __canvas = document.createElement('canvas');
-            document.body.appendChild(__canvas);
-        }//end if
-        __canvas.onmousemove = function(e){
-            this.mouseX = e.pageX;
-            this.mouseY = e.pageY;
-        }//end onmousemove
+Engine.once('init', function(){
+    __canvas = document.querySelector('#nova canvas');
+    if(__canvas == null){
+        __canvas = document.createElement('canvas');
+        document.body.appendChild(__canvas);
+    }//end if
+    __canvas.onmousemove = function(e){
+        this.mouseX = e.pageX;
+        this.mouseY = e.pageY;
+    }//end onmousemove
 
-        __canvas.width = __canvas.clientWidth;
-        __canvas.height = __canvas.clientHeight;
-        let context = __canvas.getContext('2d');
-        context.translate(__canvas.width / 2, __canvas.height / 2);
+    __canvas.width = __canvas.clientWidth;
+    __canvas.height = __canvas.clientHeight;
+    let context = __canvas.getContext('2d');
+    context.translate(__canvas.width / 2, __canvas.height / 2);
 
-        __canvas.onclick = function(){
-            Engine.start();
-            __canvas.onclick = void 0;
-        };//end onclick
+    __canvas.onclick = function(){
+        Engine.start();
+        __canvas.onclick = void 0;
+    };//end onclick
 
-        this.emit('draw-title-screen', context);
-    });//end once('init')
+    this.emit('draw-title-screen', context);
+});//end once('init')
+
+if(document === dummy){
+    Engine.emit('init');
 }//end if
-
-else{
-    __canvas = dummy.createElement('canvas');
-    __canvas.mouseX = 0;
-    __canvas.mouseY = 0;
-}//end else
 
 Object.defineProperties(Engine, {
     left: {
@@ -173,3 +170,5 @@ Object.defineProperties(Engine, {
         }//end value
     }//end clear
 });//end defineProperties
+
+export default Engine;

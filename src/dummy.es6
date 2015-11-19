@@ -30,11 +30,17 @@ let __canvasElement = {
 };//end __canvasElement
 let dummy = {
     Image: function(){},
+    querySelector: function(){
+        return null;
+    },//end querySelector
     createElement: function(arg){
         if(arg === 'canvas'){
             return __canvasElement;
         }//end if
-    }//end createElement
+    },//end createElement
+    body: {
+        appendChild: doNothing
+    }//end body
 };//end dummy
 
 export default dummy;
