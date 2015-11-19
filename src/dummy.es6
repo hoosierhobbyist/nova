@@ -13,7 +13,8 @@ let __2Dcontext = {
     moveTo: doNothing,
     lineTo: doNothing,
     closePath: doNothing,
-    restore: doNothing
+    restore: doNothing,
+    clearRect: doNothing
 };//end __2Dcontext
 let __canvasElement = {
     width: 300,
