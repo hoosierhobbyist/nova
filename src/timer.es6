@@ -5,9 +5,11 @@ export default class Timer{
     constructor(startNow = true){
         Object.defineProperties(this, {
             cachedTime: {
-                value: 0
+                value: 0,
+                writable: true
             },//end cachedTime
             startTime: {
+                writable: true,
                 value: startNow ? Date.now() : null
             },//end startTime
             isRunning: {
