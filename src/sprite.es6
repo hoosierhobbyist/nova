@@ -41,7 +41,7 @@ Object.seal(__defaults);
 
 /*
 TODO:
-    ! CRITICAL: a whole lot of NaNs showing up in repl session
+    x CRITICAL: a whole lot of NaNs showing up in repl session
     x add `k` property to Sprite instances (spring constant)
     x deal with magnitudes and angles in config
     x figure out boundary actions (deep copy? look up /\)
@@ -694,8 +694,6 @@ export default class Sprite extends Emitter{
                 bndActions.bottom.BOUNCE.call(this);
             }//end else if
         }//end if
-
-        return this;
     }//end ::update
 
 }//end class Sprite
