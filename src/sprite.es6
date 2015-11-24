@@ -64,7 +64,7 @@ TODO:
     - should setting numeric values fail silently if parseFloat() fails?
         - this would mean the config object needs to be vetted before use
     - Sprite prototype methods need to be aware of Mouse object
-    - should there be draw events?
+    - should there be draw events or possible user defined draw functions?
     x bndActions should be organized by side then action
     x Emitter should have an events() method that returns an Array
     x should Sprite#ctx be visible? (no)
@@ -448,6 +448,15 @@ export default class Sprite extends Emitter{
                     this.y += value - this.bottom;
                 }//end set
             },//end bottom
+            offScreen: {
+                enumerable: true,
+                get: function(){
+                    return this.bottom > Engine.top ||
+                           this.top < Engine.bottom ||
+                           this.left > Engine.right ||
+                           this.right < Engine.left;
+                },//end get
+            },//end offScreen
             bndAction: {
                 enumerable: true,
                 get: function(){
@@ -547,7 +556,7 @@ export default class Sprite extends Emitter{
     }//end ::collidesWith
 
     draw(){
-        if(this.visible){
+        if(this.visible && !this.offScreen){
             __context.save();
 
             if(this.imgSrc){
