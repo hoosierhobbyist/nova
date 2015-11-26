@@ -178,7 +178,7 @@ export default class AniSprite extends Sprite{
     }//end ::stop
 
     draw(){
-        if(this.visible){
+        if(this.visible && !this.offScreen){
             __context.save();
 
             if(this.imgSrc){
