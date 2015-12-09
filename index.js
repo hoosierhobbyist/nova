@@ -22,11 +22,21 @@ var _libEmitter = require('./lib/emitter');
 
 var _libEmitter2 = _interopRequireDefault(_libEmitter);
 
+var _libAniSprite = require('./lib/aniSprite');
+
+var _libAniSprite2 = _interopRequireDefault(_libAniSprite);
+
+var _libTextSprite = require('./lib/textSprite');
+
+var _libTextSprite2 = _interopRequireDefault(_libTextSprite);
+
 var _libGeometry = require('./lib/geometry');
 
 exports.Timer = _libTimer2['default'];
 exports.Sprite = _libSprite2['default'];
 exports.Emitter = _libEmitter2['default'];
+exports.AniSprite = _libAniSprite2['default'];
+exports.TextSprite = _libTextSprite2['default'];
 exports.Point = _libGeometry.Point;
 exports.Circle = _libGeometry.Circle;
 exports.Line = _libGeometry.Line;
