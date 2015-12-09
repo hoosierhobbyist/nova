@@ -12,6 +12,11 @@ let __groups = new Map();
 let __zLevels = new Map();
 let __origin = new Point(0, 0);
 let Image = Image || dummy.Image;
+let DIE = new Symbol('DIE');
+let WRAP = new Symbol('WRAP');
+let STOP = new Symbol('STOP');
+let SPRING = new Symbol('SPRING');
+let BOUNCE = new Symbol('BOUNCE');
 let __context = Engine.canvas.getContext('2d');
 let __polar = [
     'dispMag', 'dispAngle',
@@ -35,7 +40,8 @@ let __defaults = {
     imgWidth: 64,
     imgHeight: 64,
     visible: true,
-    bndAction: 'WRAP'
+    bndAction: WRAP,
+    drawFunction: null
 };//end __defaults
 Object.seal(__defaults);
 
@@ -48,31 +54,33 @@ TODO:
     x need a context from a <canvas> tag
     x need to deal with `on-*` and `once-*` keys in config object (is this too complicated? yes)
     x when do I seal the config object? (at the very end of constructor)
-    - Sprite class level methods (should i copy all from Greenhorn?)
-    x should __defaults be sealed? (yes, for now)
+    x Sprite class level methods (should i copy all from Greenhorn? no)
+    x should __defaults be sealed? (yes)
     x do I need __config? (no)
-    x how to draw Sprites in zLevel order? (hash of Sets)
+    x how to draw Sprites in zLevel order? (Map of WeakSets)
     x what fields should be removed from the config object (none)
-    x is scale set logic correct? (very likely yes)
+    x is scale set logic correct? (yes)
     x is there a difference between imgWidth and width or imgHeight and height? (yes)
     x should width and height be settable or even exist? (maybe calculated using lft, rght, etc?)
     x need to add some more in-depth logic to set zLevel
-    - are Sprite groups a thing?
+    x are Sprite groups a thing? (yes)
+    x should there be a way to add and remove Sprites from groups after construction? (yes, class level methods)
     x what is the utility of __all? (Sprite class methods)
     x should __zLevels and __groups be a Map of WeakSets? (yes)
-    - should the boundary action keys be Symbols?
-    - should setting numeric values fail silently if parseFloat() fails?
-        - this would mean the config object needs to be vetted before use
-    - Sprite prototype methods need to be aware of Mouse object
-    - should there be draw events or possible user defined draw functions?
+    x should the boundary action keys be Symbols? (yes)
+    x should setting numeric values fail silently if parseFloat() fails? (no, its JS)
+        x this would mean the config object needs to be vetted before use
+    x Sprite prototype methods need to be aware of Mouse object
+    x should there be draw events or possible user defined draw functions? (yes and yes)
     x bndActions should be organized by side then action
     x Emitter should have an events() method that returns an Array
     x should Sprite#ctx be visible? (no)
-    - drawing a non-image Sprite should have more options
+    x drawing a non-image Sprite should have more options (solved by drawFunction)
     x should sprites update independantly? (yes, for now)
-    - should scale be split between x and y?
-    - collision routines should support bare Points and Shapes
-        - how should this work for distanceTo and angleTo? (maybe use center point?)
+    x should scale be split between x and y? (no)
+    x should Engine.MOUSE be a Symbol? (not yet, maybe later)
+    x collision routines should support bare Points and Shapes (this may require a later addition to the geometry library)
+        x how should this work for distanceTo and angleTo? (maybe use center point?)
 */
 export default class Sprite extends Emitter{
 
@@ -124,10 +132,9 @@ export default class Sprite extends Emitter{
             __edge = new Circle(config['radius'], this);
         }//end if
         else if(config['points'] != null){
-            let pts = [];
-            for(let i = 0; i < config['points'].length; ++i){
-                pts.push(new Point(config['points'][i]['x'], config['points'][i]['y'], this));
-            }//end for
+            let pts = config['points'].map(function(pt){
+                return new Point(pt.x, pt.y, this);
+            }, this);
 
             __edge = new Polygon(...pts);
         }//end else if
@@ -143,6 +150,21 @@ export default class Sprite extends Emitter{
 
             __edge = new Polygon(...pts);
         }//end else
+
+        if(config['group'] != null){
+            if(!__groups.has(config['group'])){
+                __groups.set(config['group'], new WeakSet());
+            }//end if
+            __groups.get(config['group']).add(this);
+        }//end if
+        if(config['groups'] != null){
+            for(let group of config['groups']){
+                if(!__groups.has(group)){
+                    __groups.set(group, new WeakSet());
+                }//end if
+                __groups.get(group).add(this);
+            }//end for
+        }//end if
 
         Object.defineProperties(this, {
             k: {
@@ -328,6 +350,20 @@ export default class Sprite extends Emitter{
                     }//end if
                 }//end set
             },//end zLevel
+            groups: {
+                enumerable: true,
+                get: function(){
+                    let grps = [];
+
+                    __groups.forEach(function(set, key){
+                        if(set.has(this)){
+                            grps.push(key);
+                        }//end if
+                    });//end forEach
+
+                    return grps;
+                }//end get
+            },//end groups
             scale: {
                 enumerable: true,
                 get: function(){
@@ -374,7 +410,7 @@ export default class Sprite extends Emitter{
             imgSrc: {
                 enumerable: true,
                 get: function(){
-                    return this.image.src;
+                    return this.img.src;
                 },//end get
                 set: function(value){
                     this.img.src = value.toString();
@@ -412,6 +448,17 @@ export default class Sprite extends Emitter{
                     return __edge.r;
                 }//end get
             },//end radius
+            drawFunction: {
+                enumerable: true,
+                get: function(){
+                    return config['drawFunction'];
+                },//end get
+                set: function(value){
+                    if(value === null || typeof(value) === 'function'){
+                        config['drawFunction'] = value;
+                    }//end if
+                }//end set
+            },//end drawFunction
             left: {
                 enumerable: true,
                 get: function(){
@@ -550,19 +597,29 @@ export default class Sprite extends Emitter{
             else if(other === 'mouse'){
                 return this.edge.collidesWith(Engine.mouse);
             }//end else if
+
+            else{
+                return this.edge.collidesWith(other);
+            }//end else
         }//end if
 
-        return this.edge.collidesWith(other);
+        return false;
     }//end ::collidesWith
 
     draw(){
         if(this.visible && !this.offScreen){
             __context.save();
+            __context.translate(this.x, -this.y);
+            __context.rotate(-this.tilt);
+            __context.scale(this.scale, this.scale);
 
-            if(this.imgSrc){
-                __context.translate(this.x, -this.y);
-                __context.rotate(-this.tilt);
-                __context.scale(this.scale, this.scale);
+            if(this.drawFunction){
+                this.drawFunction.call(this, __context);
+            }//end if
+
+            else if(this.imgSrc){
+                this.emit('draw-below', __context);
+
                 __context.drawImage(
                     this.img,
                     -this.imgWidth / 2,
@@ -570,6 +627,8 @@ export default class Sprite extends Emitter{
                     this.imgWidth,
                     this.imgHeight
                 );//end drawImage
+
+                this.emit('draw-above', __context);
             }//end if
 
             else{
@@ -620,86 +679,86 @@ export default class Sprite extends Emitter{
 
         if(this.right < Engine.left){
             this.emit('off-left');
-            if(this.bndActions['left'] === 'DIE'){
+            if(this.bndActions['left'] === DIE){
                 bndActions.left.DIE.call(this);
             }//end if
-            else if(this.bndActions['left'] === 'WRAP'){
+            else if(this.bndActions['left'] === WRAP){
                 bndActions.left.WRAP.call(this);
             }//end else if
         }//end if
         if(this.left > Engine.right){
             this.emit('off-right');
-            if(this.bndActions['right'] === 'DIE'){
+            if(this.bndActions['right'] === DIE){
                 bndActions.right.DIE.call(this);
             }//end if
-            else if(this.bndActions['right'] === 'WRAP'){
+            else if(this.bndActions['right'] === WRAP){
                 bndActions.right.WRAP.call(this);
             }//end else if
         }//end if
         if(this.bottom > Engine.top){
             this.emit('off-top');
-            if(this.bndActions['top'] === 'DIE'){
+            if(this.bndActions['top'] === DIE){
                 bndActions.top.DIE.call(this);
             }//end if
-            else if(this.bndActions['top'] === 'WRAP'){
+            else if(this.bndActions['top'] === WRAP){
                 bndActions.top.WRAP.call(this);
             }//end else if
         }//end if
         if(this.top < Engine.bottom){
             this.emit('off-bottom');
-            if(this.bndActions['bottom'] === 'DIE'){
+            if(this.bndActions['bottom'] === DIE){
                 bndActions.bottom.DIE.call(this);
             }//end if
-            else if(this.bndActions['bottom'] === 'WRAP'){
+            else if(this.bndActions['bottom'] === WRAP){
                 bndActions.bottom.WRAP.call(this);
             }//end else if
         }//end if
 
         if(this.left <= Engine.left){
             this.emit('hit-left');
-            if(this.bndActions['left'] === 'STOP'){
+            if(this.bndActions['left'] === STOP){
                 bndActions.left.STOP.call(this);
             }//end if
-            else if(this.bndActions['left'] === 'SPRING'){
+            else if(this.bndActions['left'] === SPRING){
                 bndActions.left.SPRING.call(this);
             }//end else if
-            else if(this.bndActions['left'] === 'BOUNCE'){
+            else if(this.bndActions['left'] === BOUNCE){
                 bndActions.left.BOUNCE.call(this);
             }//end else if
         }//end if
         if(this.right >= Engine.right){
             this.emit('hit-right');
-            if(this.bndActions['right'] === 'STOP'){
+            if(this.bndActions['right'] === STOP){
                 bndActions.right.STOP.call(this);
             }//end if
-            else if(this.bndActions['right'] === 'SPRING'){
+            else if(this.bndActions['right'] === SPRING){
                 bndActions.right.SPRING.call(this);
             }//end else if
-            else if(this.bndActions['right'] === 'BOUNCE'){
+            else if(this.bndActions['right'] === BOUNCE){
                 bndActions.right.BOUNCE.call(this);
             }//end else if
         }//end if
         if(this.top >= Engine.top){
             this.emit('hit-top');
-            if(this.bndActions['top'] === 'STOP'){
+            if(this.bndActions['top'] === STOP){
                 bndActions.top.STOP.call(this);
             }//end if
-            else if(this.bndActions['top'] === 'SPRING'){
+            else if(this.bndActions['top'] === SPRING){
                 bndActions.top.SPRING.call(this);
             }//end else if
-            else if(this.bndActions['top'] === 'BOUNCE'){
+            else if(this.bndActions['top'] === BOUNCE){
                 bndActions.top.BOUNCE.call(this);
             }//end else if
         }//end if
         if(this.bottom <= Engine.bottom){
             this.emit('hit-bottom');
-            if(this.bndActions['bottom'] === 'STOP'){
+            if(this.bndActions['bottom'] === STOP){
                 bndActions.bottom.STOP.call(this);
             }//end if
-            else if(this.bndActions['bottom'] === 'SPRING'){
+            else if(this.bndActions['bottom'] === SPRING){
                 bndActions.bottom.SPRING.call(this);
             }//end else if
-            else if(this.bndActions['bottom'] === 'BOUNCE'){
+            else if(this.bndActions['bottom'] === BOUNCE){
                 bndActions.bottom.BOUNCE.call(this);
             }//end else if
         }//end if
@@ -708,6 +767,26 @@ export default class Sprite extends Emitter{
 }//end class Sprite
 
 Object.defineProperties(Sprite, {
+    DIE: {
+        value: DIE,
+        enumerable: true
+    },//end DIE
+    WRAP: {
+        value: WRAP,
+        enumerable: true
+    },//end WRAP
+    STOP: {
+        value: STOP,
+        enumerable: true
+    },//end STOP
+    SPRING: {
+        value: SPRING,
+        enumerable: true
+    },//end SPRING
+    BOUNCE: {
+        value: BOUNCE,
+        enumerable: true
+    },//end BOUNCE
     number: {
         enumerable: true,
         get: function(){
@@ -746,7 +825,41 @@ Object.defineProperties(Sprite, {
                 __zLevels.get(key).forEach(function(sprite){sprite.draw();});
             }//end for
         }//end value
-    }//end draw
+    },//end draw
+    addToGroup: {
+        enumerable: true,
+        value: function(sprite, group){
+            if(sprite instanceof Sprite){
+                if(!__groups.has(group)){
+                    __groups.set(group, new WeakSet());
+                }//end if
+                __groups.get(group).add(sprite);
+            }//end if
+        }//end value
+    },//end addToGroup
+    removeFromGroup: {
+        enumerable: true,
+        value: function(sprite, group){
+            if(__groups.has(group)){
+                __groups.get(group).delete(sprite);
+            }//end if
+        }//end value
+    },//end removeFromGroup
+    forEach: {
+        enumerable: true,
+        value: function(group, fn){
+            if(typeof(group) === 'function'){
+                fn = group;
+                __all.forEach(fn);
+            }//end if
+
+            else{
+                if(__groups.has(group)){
+                    __groups.get(group).forEach(fn);
+                }//end if
+            }//end else
+        }//end value
+    }//end forEach
 });//end defineProperties
 
 Engine.on('start', Sprite.start);
