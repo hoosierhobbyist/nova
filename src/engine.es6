@@ -5,12 +5,20 @@ import Emitter from './emitter';
 import {Point} from './geometry';
 
 let __canvas;
+let __timestamp = 0;
 let __frameRate = 25;
-let __masterID = null;
+let __isRunning = false;
 let Engine = new Emitter();
-let __masterUpdate = function(){
-    Engine.clear();
-    Engine.emit('update');
+let __masterUpdate = function(timestamp){
+    if(__isRunning){
+        if(timestamp - __timestamp > 1000 / __framerate){
+            Engine.clear();
+            Engine.emit('update');
+        }//end if
+
+        __timestamp = timestamp;
+        requestAnimationFrame(__masterUpdate);
+    }//end if
 }//end __masterUpdate
 let __isDown = new Int8Array(new ArrayBuffer(128));
 let KEYS = {
@@ -115,14 +123,12 @@ Object.defineProperties(Engine, {
     isDown: {
         enumerable: true,
         value: function(key){
-            return !!__isDown[KEYS[key]];
+            return !!__isDown[KEYS[key.toUpperCase()]];
         }//end value
     },//end isDown
     canvas: {
         enumerable: true,
-        get: function(){
-            return __canvas;
-        }//end get
+        value: __canvas
     },//end canvas
     frameRate: {
         enumerable: true,
@@ -140,25 +146,25 @@ Object.defineProperties(Engine, {
     isRunning: {
         enumerable: true,
         get: function(){
-            return __masterID != null;
+            return __isRunning;
         }//end value
     },//end isRunning
     start: {
         enumerable: true,
         value: function(){
-            if(!this.isRunning){
+            if(!__isRunning){
                 this.emit('start');
-                __masterID = setInterval(__masterUpdate, 1000 / __frameRate);
+                __isRunning = true;
+                requestAnimationFrame(__masterUpdate);
             }//end if
         }//end value
     },//end start
     stop: {
         enumerable: true,
         value: function(){
-            if(this.isRunning){
+            if(__isRunning){
                 this.emit('stop');
-                clearInterval(__masterID);
-                __masterID = null;
+                __isRunning = false;
             }//end if
         }//end value
     },//end stop
