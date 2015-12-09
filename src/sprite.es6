@@ -12,11 +12,11 @@ let __groups = new Map();
 let __zLevels = new Map();
 let __origin = new Point(0, 0);
 let Image = Image || dummy.Image;
-let DIE = new Symbol('DIE');
-let WRAP = new Symbol('WRAP');
-let STOP = new Symbol('STOP');
-let SPRING = new Symbol('SPRING');
-let BOUNCE = new Symbol('BOUNCE');
+let DIE = Symbol('DIE');
+let WRAP = Symbol('WRAP');
+let STOP = Symbol('STOP');
+let SPRING = Symbol('SPRING');
+let BOUNCE = Symbol('BOUNCE');
 let __context = Engine.canvas.getContext('2d');
 let __polar = [
     'dispMag', 'dispAngle',
