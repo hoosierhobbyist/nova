@@ -181,7 +181,13 @@ export default class AniSprite extends Sprite{
         if(this.visible && !this.offScreen){
             __context.save();
 
+            if(this.drawFunction){
+                this.drawFunction.call(this, __context);
+            }//end if
+
             if(this.imgSrc){
+                this.emit('draw-below', __context);
+
                 let sx = 0;
                 let sy = 0;
 
@@ -209,6 +215,8 @@ export default class AniSprite extends Sprite{
                     this.cellWidth,
                     this.cellHeight
                 );//end drawImage
+
+                this.emit('draw-above', __context);
             }//end if
 
             else{
