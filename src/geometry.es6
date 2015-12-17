@@ -124,11 +124,9 @@ export class Point{
                     return Math.atan2(rel_y, rel_x);
                 },//end get
                 set: function(value){
-                    let x = this.dist * Math.cos(value);
-                    let y = this.dist * Math.sin(value);
-
-                    rel_x = x;
-                    rel_y = y;
+                    let dist = this.dist;
+                    rel_x = dist * Math.cos(value);
+                    rel_y = dist * Math.sin(value);
                 }//end set
             },//end angle
             dist: {
@@ -138,11 +136,9 @@ export class Point{
                 },//end get
                 set: function(value){
                     if(value >= 0){
-                        let x = value * Math.cos(this.angle);
-                        let y = value * Math.sin(this.angle);
-
-                        rel_x = x;
-                        rel_y = y;
+                        let angle = this.angle;
+                        rel_x = value * Math.cos(angle);
+                        rel_y = value * Math.sin(angle);
                     }//end if
                 }//end set
             }//end dist

@@ -33,6 +33,10 @@ export default class Emitter{
         });//end defineProperty
     }//end constructor
 
+    events(){
+        return Object.keys(prvt_evnts.get(this));
+    }//end events
+
     options(event, listener){
         let opts = prvt_opts.get(this);
 

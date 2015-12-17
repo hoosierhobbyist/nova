@@ -30,10 +30,14 @@ export function sq (n){
     return n * n;
 }//end sq
 
-export function sqrt (n){
-    return Math.sqrt(n);
-}//end sqrt
-
 export function dist (pt1, pt2){
     return Math.sqrt(Math.pow(pt2.x - pt1.x, 2) + Math.pow(pt2.y - pt1.y, 2));
 }//end dist
+
+let PI = Math.PI;
+let cos = Math.cos;
+let sin = Math.sin;
+let sqrt = Math.sqrt;
+let atan2 = Math.atan2;
+
+export {PI, cos, sin, sqrt, atan2};
