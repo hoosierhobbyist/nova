@@ -8,19 +8,20 @@
   "devDependencies": {
       "mocha": "^2.3.3",
       "babel": "^5.8.23",
-      "should": "^7.1.0"
+      "should": "^7.1.0",
+      "browserify": "^12.0.1"
   },
   "scripts": {
     "pretest": "mkdir -p test && babel specs -d test",
     "test": "mocha -r should; rm -r test",
-    "prepublish": "babel src -d lib  && babel index.es6 > index.js"
+    "prepublish": "babel src -d lib  && babel index.es6 > index.js && browserify -s nova index.js > nova.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sedabull/nova.git"
   },
   "keywords": [
-    "es6",
+    "es2015",
     "gaming"
   ],
   "author": "Seth David Bullock",

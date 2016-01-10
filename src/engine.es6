@@ -4,6 +4,11 @@ import dummy from './dummy';
 import Emitter from './emitter';
 import {Point} from './geometry';
 
+/*
+TODO:
+    - not getting correct canvas in browser!
+*/
+
 let __canvas;
 let __timestamp = 0;
 let __frameRate = 25;
@@ -11,12 +16,12 @@ let __isRunning = false;
 let Engine = new Emitter();
 let __masterUpdate = function(timestamp){
     if(__isRunning){
-        if(timestamp - __timestamp > 1000 / __framerate){
+        if((timestamp - __timestamp) > (1000 / __frameRate)){
             Engine.clear();
+            Engine.emit('draw-background');
             Engine.emit('update');
+            __timestamp = timestamp;
         }//end if
-
-        __timestamp = timestamp;
         requestAnimationFrame(__masterUpdate);
     }//end if
 }//end __masterUpdate
@@ -34,7 +39,8 @@ let KEYS = {
     T: 84, U: 85, V: 86, W: 87, X: 88, Y: 89, Z: 90
 };//end KEYS
 
-let document = document ? document : dummy;
+//TODO: Broken! how to define dummy in server context?
+//let document = document ? document : dummy;
 document.onkeyup = function(e){
     e.preventDefault();
     __isDown[e.keyCode] = 0;
@@ -51,6 +57,7 @@ document.onreadystatechange = function(){
 
 Engine.once('init', function(){
     __canvas = document.querySelector('#nova canvas');
+
     if(__canvas == null){
         __canvas = document.createElement('canvas');
         document.body.appendChild(__canvas);
@@ -60,14 +67,17 @@ Engine.once('init', function(){
         this.mouseY = e.pageY;
     }//end onmousemove
 
+    __canvas.style.cursor = 'pointer';
     __canvas.width = __canvas.clientWidth;
     __canvas.height = __canvas.clientHeight;
+
     let context = __canvas.getContext('2d');
     context.translate(__canvas.width / 2, __canvas.height / 2);
 
     __canvas.onclick = function(){
         Engine.start();
-        __canvas.onclick = void 0;
+        this.onclick = void 0;
+        this.style.cursor = 'default';
     };//end onclick
 
     this.emit('draw-title-screen', context);
@@ -128,8 +138,16 @@ Object.defineProperties(Engine, {
     },//end isDown
     canvas: {
         enumerable: true,
-        value: __canvas
+        get: function(){
+            return __canvas;
+        },//end get
     },//end canvas
+    ctx: {
+        enumerable: true,
+        get: function(){
+            return __canvas.getContext('2d');
+        }//end get
+    },//end ctx
     frameRate: {
         enumerable: true,
         get: function(){

@@ -34,7 +34,6 @@ Object.seal(__defaults.font);
 Object.seal(__defaults.border);
 Object.seal(__defaults.margins);
 Object.seal(__defaults.background);
-let __context = Engine.canvas.getContext('2d');
 
 export default class TextSprite extends Sprite{
 
@@ -60,21 +59,21 @@ export default class TextSprite extends Sprite{
         Object.seal(config['background']);
 
         delete config['radius'];
-        delete config['points'];
+        delete config['pts'];
         let __text = config['text'].split('\n');
 
         config['imgWidth'] = 0;
         config['imgHeight'] = 1.5 * __text.length * config['font']['size'];
 
-        __context.save();
-        __context.font = `${config['font']['size']}px ${config['font']['name']}`;
+        Engine.ctx.save();
+        Engine.ctx.font = `${config['font']['size']}px ${config['font']['name']}`;
         for(let line of __text){
-            let width = __context.measureText(line);
+            let width = Engine.ctx.measureText(line);
             if(config['imgWidth'] < width){
                 config['imgWidth'] = width;
             }//end if
         }//end for
-        __context.restore();
+        Engine.ctx.restore();
 
         config['imgWidth'] += config['margins']['left'] + config['margins']['right'];
         config['imgHeight'] += config['margins']['top'] + config['margins']['bottom'];
@@ -132,22 +131,22 @@ export default class TextSprite extends Sprite{
 
     draw(){
         if(this.visible && !this.offScreen){
-            __context.save();
+            Engine.ctx.save();
 
             if(this.drawFunction){
-                this.drawFunction.call(this, __context);
+                this.drawFunction.call(this, Engine.ctx);
             }//end if
 
             else{
-                this.emit('draw-below', __context);
+                this.emit('draw-below', Engine.ctx);
 
                 let xOffset = 0;
                 let yOffset = 0;
                 let text = this.text.split('\n');
 
-                __context.translate(this.x, -this.y);
-                __context.rotate(-this.tilt);
-                __context.scale(this.scale, this.scale);
+                Engine.ctx.translate(this.x, -this.y);
+                Engine.ctx.rotate(-this.tilt);
+                Engine.ctx.scale(this.scale, this.scale);
 
                 yOffset = (text.length - 1) * this.font.size * .75;
                 if(this.font.align.toLowerCase() === 'left'){
@@ -164,30 +163,30 @@ export default class TextSprite extends Sprite{
                 }//end if
 
                 if(this.background.visible){
-                    __context.fillStyle = this.background.color;
-                    __context.globalAlpha = this.background.alpha;
-                    __context.fillRect(-this.boxWidth/2, -this.boxHeight/2, this.boxWidth, this.boxHeight);
+                    Engine.ctx.fillStyle = this.background.color;
+                    Engine.ctx.globalAlpha = this.background.alpha;
+                    Engine.ctx.fillRect(-this.boxWidth/2, -this.boxHeight/2, this.boxWidth, this.boxHeight);
                 }//end if
 
                 if(this.border.visible){
-                    __context.lineWidth = this.border.size;
-                    __context.strokeStyle = this.border.color;
-                    __context.globalAlpha = this.border.alpha;
-                    __context.strokeRect(-this.boxWidth/2, -this.boxHeight/2, this.boxWidth, this.boxHeight);
+                    Engine.ctx.lineWidth = this.border.size;
+                    Engine.ctx.strokeStyle = this.border.color;
+                    Engine.ctx.globalAlpha = this.border.alpha;
+                    Engine.ctx.strokeRect(-this.boxWidth/2, -this.boxHeight/2, this.boxWidth, this.boxHeight);
                 }//end if
 
-                __context.textBaseLine = 'middle';
-                __context.textAlign = this.font.align;
-                __context.fillStyle = this.font.color;
-                __context.globalAlpha = this.font.alpha;
+                Engine.ctx.textBaseLine = 'middle';
+                Engine.ctx.textAlign = this.font.align;
+                Engine.ctx.fillStyle = this.font.color;
+                Engine.ctx.globalAlpha = this.font.alpha;
                 for(let i = 0; i < text.length; ++i){
-                    __context.fillText(text[i], xOffset, this.font.size*1.5*i - yOffset);
+                    Engine.ctx.fillText(text[i], xOffset, this.font.size*1.5*i - yOffset);
                 }//end for
 
                 this.emit('draw-above', context);
             }//end else
 
-            __context.restore();
+            Engine.ctx.restore();
         }//end if
     }//end ::draw
 
@@ -200,15 +199,15 @@ export default class TextSprite extends Sprite{
         this.boxWidth = 0;
         this.boxHeight = 1.5 * this.font.size * text.length;
 
-        __context.save();
-        __context.font = `${this.font.size}px ${this.font.name}`;
+        Engine.ctx.save();
+        Engine.ctx.font = `${this.font.size}px ${this.font.name}`;
         for(let line of text){
-            let width = __context.measureText(line);
+            let width = Engine.ctx.measureText(line);
             if(this.boxWidth < width){
                 this.boxWidth = width;
             }//end if
         }//end for
-        __context.restore();
+        Engine.ctx.restore();
 
         this.boxWidth += this.margins.left + this.margins.right;
         this.boxHeight += this.margins.top + this.margins.bottom;

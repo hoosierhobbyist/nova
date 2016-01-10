@@ -16,5 +16,5 @@ export {
     Circle,
     Line,
     Polygon,
-    Engine as nova
+    Engine
 }//end exports

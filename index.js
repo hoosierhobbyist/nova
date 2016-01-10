@@ -41,6 +41,6 @@ exports.Point = _libGeometry.Point;
 exports.Circle = _libGeometry.Circle;
 exports.Line = _libGeometry.Line;
 exports.Polygon = _libGeometry.Polygon;
-exports.nova = _libEngine2['default'];
+exports.Engine = _libEngine2['default'];
 //end exports
 

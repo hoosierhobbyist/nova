@@ -18,7 +18,6 @@ let __cycleDefaults = {
     length: 8,
 };//end __cycleDefaults
 Object.seal(__cycleDefaults);
-let __context = Engine.canvas.getContext('2d');
 
 class AniCycle{
 
@@ -179,21 +178,21 @@ export default class AniSprite extends Sprite{
 
     draw(){
         if(this.visible && !this.offScreen){
-            __context.save();
+            Engine.ctx.save();
 
             if(this.drawFunction){
-                this.drawFunction.call(this, __context);
+                this.drawFunction.call(this, Engine.ctx);
             }//end if
 
             if(this.imgSrc){
-                this.emit('draw-below', __context);
+                this.emit('draw-below', Engine.ctx);
 
                 let sx = 0;
                 let sy = 0;
 
-                __context.translate(this.x, -this.y);
-                __context.rotate(-this.tilt);
-                __context.scale(this.scale, this.scale);
+                Engine.ctx.translate(this.x, -this.y);
+                Engine.ctx.rotate(-this.tilt);
+                Engine.ctx.scale(this.scale, this.scale);
 
                 if(this.orientation === 'horizontal'){
                     sx = this.active.frame;
@@ -204,7 +203,7 @@ export default class AniSprite extends Sprite{
                     sy = this.active.frame;
                 }//end else if
 
-                __context.drawImage(
+                Engine.ctx.drawImage(
                     this.img,
                     this.cellWidth * sx,
                     this.cellHeight * sy,
@@ -216,14 +215,14 @@ export default class AniSprite extends Sprite{
                     this.cellHeight
                 );//end drawImage
 
-                this.emit('draw-above', __context);
+                this.emit('draw-above', Engine.ctx);
             }//end if
 
             else{
                 console.error('Unable to draw AniSprite');
             }//end else
 
-            __context.restore();
+            Engine.ctx.restore();
         }//end if
     }//end ::draw
 
